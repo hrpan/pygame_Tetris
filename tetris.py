@@ -48,11 +48,13 @@ while 1:
         game.moveRight()
     if keys[pygame.K_DOWN]:
         game.moveDown()
-
-    pygame.time.delay(30)
+    print game.previewBoard(2)    
+    pygame.time.delay(3000)
     vis.drawScore(game,screen,font)
     vis.drawBoard(game,screen)
+    """
     if (pygame.time.get_ticks()-tick)>1500:
         tick = pygame.time.get_ticks()
         game.nextIter()
+    """
     pygame.display.flip()

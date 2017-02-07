@@ -7,6 +7,7 @@ Created on Tue Feb 07 17:03:24 2017
 
 from random import choice
 from block import Block
+import numpy as np
 block_chars=['I','L','J','O','S','T','Z']
 
 origin=[1,5]
@@ -103,6 +104,51 @@ class Tetris:
                     self.board[line_tmp]=self.board[line_tmp-1]
                     self.board[line_tmp-1]=[0]*board_w
         self.score+=lineCount
+
+    def previewBoard(self,oper):
+        """
+        0:CCW
+        1:CW
+        2:LEFT
+        3:RIGHT
+        4:NULL
+        """
+        if oper==4:
+            return self.getBoard()
         
+        if oper==0:
+            self.curr_block.rotateCCW()
+        elif oper==1:        
+            self.curr_block.rotateCW()
+        elif oper==2:
+            self.curr_block.move(dir_L)
+        elif oper==3:
+            self.curr_block.move(dir_R)
+        
+        if self.checkViolation():
+            if oper==0:
+                self.curr_block.rotateCW()
+            elif oper==1:        
+                self.curr_block.rotateCCW()
+            elif oper==2:
+                self.curr_block.move(dir_R)
+            elif oper==3:
+                self.curr_block.move(dir_L)            
+            return self.getBoard()
+        else:
+            result = self.getBoard()
+            if oper==0:
+                self.curr_block.rotateCW()
+            elif oper==1:        
+                self.curr_block.rotateCCW()
+            elif oper==2:
+                self.curr_block.move(dir_R)
+            elif oper==3:
+                self.curr_block.move(dir_L)              
+        return result
+
     def getBoard(self):
-        return self.board
+        result=[x[:] for x in self.board]
+        for pt in self.curr_block.getPTS():
+            result[pt[0]][pt[1]]=1
+        return result
