@@ -9,6 +9,9 @@ import sys, pygame
 import vis
 import core
 
+mode='AI'
+#mode='PLAY'
+
 game = core.Tetris()
 
 pygame.init()
@@ -25,6 +28,7 @@ while 1:
         break
     if tick==-1:
         tick = pygame.time.get_ticks()
+        
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             sys.exit()
@@ -41,6 +45,7 @@ while 1:
                 game.rotateCW()
             if event.key==pygame.K_SPACE:
                 game.moveDrop()
+                
     keys=pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         game.moveLeft()
@@ -48,13 +53,17 @@ while 1:
         game.moveRight()
     if keys[pygame.K_DOWN]:
         game.moveDown()
-    print game.previewBoard(2)    
-    pygame.time.delay(3000)
+        
+    
     vis.drawScore(game,screen,font)
     vis.drawBoard(game,screen)
-    """
-    if (pygame.time.get_ticks()-tick)>1500:
-        tick = pygame.time.get_ticks()
-        game.nextIter()
-    """
+    
+    if mode=='AI':
+        
+    elif mode=='PLAY'
+        pygame.time.delay(1500)
+        if (pygame.time.get_ticks()-tick)>1500:
+            tick = pygame.time.get_ticks()
+            game.nextIter()
+        
     pygame.display.flip()
