@@ -36,7 +36,6 @@ class Tetris:
         
     def spawnBlock(self):
         self.curr_block=Block(choice(block_chars),origin)
-        print self.curr_block.getPTS()
         if self.checkViolation()==True:
             self.end()
             
