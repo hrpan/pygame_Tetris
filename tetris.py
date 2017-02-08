@@ -8,11 +8,17 @@ Created on Tue Feb 07 03:57:47 2017
 import sys, pygame
 import vis
 import core
-
+import predict
+import record
 mode='AI'
 #mode='PLAY'
 
 game = core.Tetris()
+rec = record.Record()
+def null():
+	return
+
+opers=[game.rotateCCW,game.rotateCW,game.moveLeft,game.moveRight,null]
 
 pygame.init()
 font = pygame.font.SysFont("monospace",16)
@@ -25,7 +31,14 @@ tick=-1
 
 while 1:
     if game.curr_block==-1:
-        break
+	if mode=='AI':
+	    rec.recordGame(game.score)
+	    if rec.nGames==10:
+		break
+	    game.reset()
+	    game.start()
+	else:
+            break
     if tick==-1:
         tick = pygame.time.get_ticks()
         
@@ -59,11 +72,17 @@ while 1:
     vis.drawBoard(game,screen)
     
     if mode=='AI':
-        
-    elif mode=='PLAY'
+	for i in range(3):
+		boards=[game.previewBoard(i) for i in range(5)]
+		bestOper=predict.predictOper(boards)
+		opers[bestOper]()
+		rec.recordBoard(game.getBoard())
+	game.nextIter() 
+    elif mode=='PLAY':
         pygame.time.delay(1500)
         if (pygame.time.get_ticks()-tick)>1500:
             tick = pygame.time.get_ticks()
             game.nextIter()
         
     pygame.display.flip()
+rec.saveRecord()
