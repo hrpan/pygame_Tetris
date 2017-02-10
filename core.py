@@ -32,6 +32,7 @@ class Tetris:
         self.curr_block=-1
         
     def start(self):
+        self.over=False
         self.spawnBlock()
         
     def spawnBlock(self):
@@ -40,6 +41,7 @@ class Tetris:
             self.end()
             
     def end(self):
+        self.over=True
         self.curr_block=-1
 
     def detachBlock(self):
@@ -47,7 +49,7 @@ class Tetris:
             self.board[pt[0]][pt[1]]=1
         self.clearLines()
         self.spawnBlock()
-        
+
     def nextIter(self):
         self.curr_block.move(dir_D)
         if self.checkViolation():
@@ -113,7 +115,7 @@ class Tetris:
         4:NULL
         """
         if oper==4:
-            return self.getBoard()
+            return self.getState()
         
         if oper==0:
             self.curr_block.rotateCCW()
@@ -133,9 +135,9 @@ class Tetris:
                 self.curr_block.move(dir_R)
             elif oper==3:
                 self.curr_block.move(dir_L)            
-            return self.getBoard()
+            return self.getState()
         else:
-            result = self.getBoard()
+            result = self.getState()
             if oper==0:
                 self.curr_block.rotateCW()
             elif oper==1:        
@@ -146,8 +148,11 @@ class Tetris:
                 self.curr_block.move(dir_L)              
         return result
 
-    def getBoard(self):
-        result=[x[:] for x in self.board]
-        for pt in self.curr_block.getPTS():
-            result[pt[0]][pt[1]]=1
-        return result
+    def getState(self):
+        if self.curr_block==-1:
+            return self.board
+        else:
+            result=[x[:] for x in self.board]
+            for pt in self.curr_block.getPTS():
+                result[pt[0]][pt[1]]=1
+            return result
