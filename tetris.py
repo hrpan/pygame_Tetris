@@ -30,7 +30,7 @@ game.start()
 tick=-1
 
 while 1:
-    if game.curr_block==-1:
+    if game.over:
 	if mode=='AI':
 	    rec.recordGame(game.score)
 	    if rec.nGames==10:
@@ -68,21 +68,23 @@ while 1:
         game.moveDown()
         
     
-    vis.drawScore(game,screen,font)
-    vis.drawBoard(game,screen)
     
     if mode=='AI':
-	for i in range(3):
-		boards=[game.previewBoard(i) for i in range(5)]
-		bestOper=predict.predictOper(boards)
-		opers[bestOper]()
-		rec.recordBoard(game.getBoard())
-	game.nextIter() 
+	for i in range(4):
+            boards=[game.previewBoard(i) for i in range(5)]
+	    bestOper=predict.predictOper(boards)
+	    opers[bestOper]()
+        rec.recordBoard(game.getState())
+	game.nextIter()
     elif mode=='PLAY':
-        pygame.time.delay(1500)
+        pygame.time.delay(50)
         if (pygame.time.get_ticks()-tick)>1500:
             tick = pygame.time.get_ticks()
             game.nextIter()
+
+    vis.drawScore(game,screen,font)
+    vis.drawBoard(game,screen)
         
     pygame.display.flip()
-rec.saveRecord()
+if mode=='AI':
+    rec.saveRecord()
