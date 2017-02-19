@@ -47,7 +47,6 @@ class Tetris:
     def detachBlock(self):
         for pt in self.curr_block.getPTS():
             self.board[pt[0]][pt[1]]=1
-        self.clearLines()
         self.spawnBlock()
 
     def nextIter(self):
@@ -150,9 +149,9 @@ class Tetris:
 
     def getState(self):
         if self.curr_block==-1:
-            return self.board
+            return [x[:] for x in self.board]
         else:
             result=[x[:] for x in self.board]
             for pt in self.curr_block.getPTS():
-                result[pt[0]][pt[1]]=1
+                result[pt[0]][pt[1]]=-1
             return result
