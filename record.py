@@ -2,21 +2,20 @@ import numpy as np
 import os.path
 
 gamma=0.7
+decay_length=14
+ncycle=4
 
 def evalBoard(board,score):
     penalty=0
-    maxheight=0
     for i in np.arange(21,1,-1):
         for j in range(10):
             if board[i][j]==0 and board[i-1][j]==1:
                 penalty+=1
-        if 1 in board[i]:
-            maxheight=22-i
-    penalty+=maxheight
-    return score-0.2*penalty
+    return score-0.3*penalty
 
 class Record:
-    def __init__(self):
+    def __init__(self,cycle):
+        self.cycle=0
 	self.nGames=0
 	self.allScores=[]
         self.rawScores=[0]
@@ -41,7 +40,7 @@ class Record:
                 reward=self.currScores[i+1]-self.currScores[i]
             self.allScores.append(reward)
             if reward!=0:
-                for j in range(14):
+                for j in range(decay_length):
                     self.allScores[len(self.allScores)-2-j]+=reward*np.power(gamma,j+1)
         self.currGameBoards=[]
         self.currScores=[]
@@ -50,7 +49,7 @@ class Record:
     def saveRecord(self):
         npBoards = np.array(self.allGameBoards).reshape((len(self.allGameBoards),1,22,10))
         npScores = np.array(self.allScores)
-        n=0
+        n=cycle%ncycle
         #while os.path.isfile('data/boards%d.npy' % n):
         #    n+=1
         np.save('data/boards%d.npy' % n,npBoards)
