@@ -15,7 +15,7 @@ def evalBoard(board,score):
 
 class Record:
     def __init__(self,cycle):
-        self.cycle=0
+        self.cycle=cycle
 	self.nGames=0
 	self.allScores=[]
         self.rawScores=[0]
@@ -49,7 +49,7 @@ class Record:
     def saveRecord(self):
         npBoards = np.array(self.allGameBoards).reshape((len(self.allGameBoards),1,22,10))
         npScores = np.array(self.allScores)
-        n=cycle%ncycle
+        n=self.cycle%ncycle
         #while os.path.isfile('data/boards%d.npy' % n):
         #    n+=1
         np.save('data/boards%d.npy' % n,npBoards)
