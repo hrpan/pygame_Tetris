@@ -2,7 +2,8 @@ import numpy as np
 import os.path
 
 gamma=0.75
-ncycle=10
+decay_length=15
+ncycle=4
 
 def evalBoard(board,score):
     penalty=0
@@ -12,7 +13,7 @@ def evalBoard(board,score):
                 penalty+=1
             else:
                 break
-    return score-0.3*penalty
+    return score-0.2*penalty
 
 class Record:
     def __init__(self,cycle):
@@ -25,7 +26,7 @@ class Record:
         self.currGameBoards=[]
     def recordBoard(self,board,score):
         self.rawScores[-1]=score
-        self.currScores.append(evalBoard(board,score))
+        self.currScores.append(evalBoard(np.array(board),score))
         self.currGameBoards.append(np.array(board))
     def recordGame(self):
 	self.nGames+=1
@@ -34,12 +35,12 @@ class Record:
         for i,board in enumerate(self.currGameBoards):
             self.allGameBoards.append(board)
             if i==length-1:
-                reward=-1
+                reward=-5
             else:
                 reward=self.currScores[i+1]-self.currScores[i]
             self.allScores.append(reward)
             if reward!=0:
-                for j in range(1,len(self.allScores)):
+                for j in range(1,decay_length):
                     self.allScores[-1-j]+=reward*np.power(gamma,j)
         self.currGameBoards=[]
         self.currScores=[]
