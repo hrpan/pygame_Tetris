@@ -8,8 +8,8 @@ Created on Tue Feb 07 17:03:24 2017
 from random import choice
 from block import Block
 import numpy as np
+import random
 block_chars=['I','L','J','O','S','T','Z']
-
 origin=[1,5]
 
 board_h = 22
@@ -25,21 +25,31 @@ class Tetris:
         self.score=0
         self.board=[[0]*board_w for i in range(board_h)]
         self.curr_block=-1
-        
+	self.blockQueue=range(7)
+	self.blockQueueIDX=0
+ 
     def reset(self):
         self.score=0
         self.board=[[0]*board_w for i in range(board_h)]
         self.curr_block=-1
-        
+
+    def resetQueue(self):
+   	random.shuffle(self.blockQueue)
+	self.blockQueueIDX=0
+ 
     def start(self):
         self.over=False
+	self.resetQueue()
         self.spawnBlock()
         
     def spawnBlock(self):
-        self.curr_block=Block(choice(block_chars),origin)
+	char=block_chars[self.blockQueue[self.blockQueueIDX]]
+        self.curr_block=Block(char,origin)
         if self.checkViolation()==True:
             self.end()
-            
+        if self.blockQueueIDX==6:
+	    self.resetQueue()
+ 
     def end(self):
         self.over=True
         self.curr_block=-1
