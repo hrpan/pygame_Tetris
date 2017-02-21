@@ -11,7 +11,7 @@ import predict
 import record
 
 mode='AI'
-aiGames=500
+aiGames=100
 #mode='PLAY'
 
 cycle=int(sys.argv[1])
@@ -79,7 +79,7 @@ while 1:
     elif mode=='AI':
 	for i in range(3):
             boards=[game.previewBoard(i) for i in range(5)]
-	    bestOper=predict.predictOper(boards)
+	    bestOper=predict.predictOper(boards,cycle)
             if bestOper==4:
                 break
             opers[bestOper]()
@@ -88,11 +88,9 @@ while 1:
 
 
     game.clearLines()
-"""
     vis.drawScore(game,screen,font)
     vis.drawBoard(game,screen)
     
     pygame.display.flip()
-"""
 if mode=='AI':
     rec.saveRecord()
