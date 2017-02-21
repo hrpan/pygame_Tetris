@@ -44,10 +44,11 @@ class Tetris:
         
     def spawnBlock(self):
 	char=block_chars[self.blockQueue[self.blockQueueIDX]]
+	self.blockQueueIDX+=1
         self.curr_block=Block(char,origin)
         if self.checkViolation()==True:
             self.end()
-        if self.blockQueueIDX==6:
+        if self.blockQueueIDX==7:
 	    self.resetQueue()
  
     def end(self):
