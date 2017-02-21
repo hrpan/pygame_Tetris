@@ -6,7 +6,7 @@ ncycle=10
 
 def evalBoard(board,score):
     penalty=0
-    for i,j in np.where(board==1):
+    for i,j in np.transpose(np.where(board==1)):
         for k in range(i+1,22):
             if board[k][j]==0 or board[k][j]==-1:
                 penalty+=1
