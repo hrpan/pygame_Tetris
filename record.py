@@ -2,7 +2,7 @@ import numpy as np
 import os.path
 
 gamma=0.75
-ncycle=4
+ncycle=10
 
 def evalBoard(board,score):
     penalty=0
@@ -10,7 +10,7 @@ def evalBoard(board,score):
         for k in range(i+1,22):
             if board[k][j]==0 or board[k][j]==-1:
                 penalty+=1
-            else
+            else:
                 break
     return score-0.3*penalty
 
