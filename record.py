@@ -1,15 +1,17 @@
 import numpy as np
 import os.path
 
-gamma=0.95
+gamma=0.75
 ncycle=4
 
 def evalBoard(board,score):
     penalty=0
-    for i in np.arange(21,1,-1):
-        for j in range(10):
-            if board[i][j]==0 and board[i-1][j]==1:
+    for i,j in np.where(board==1):
+        for k in range(i+1,22):
+            if board[k][j]==0 or board[k][j]==-1:
                 penalty+=1
+            else
+                break
     return score-0.3*penalty
 
 class Record:
