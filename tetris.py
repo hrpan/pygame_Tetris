@@ -10,12 +10,9 @@ import core
 import predict
 import record
 
-mode='AI'
-aiGames=100
-#mode='PLAY'
 
-cycle=int(sys.argv[1])
-rec = record.Record(cycle)
+mode='AI'
+#mode='PLAY'
 
 
 pygame.init()
@@ -27,20 +24,28 @@ game = core.Tetris()
 opers=[game.rotateCCW,game.rotateCW,game.moveLeft,game.moveRight]
 game.start()
 tick=-1
+
+if mode=='AI':
+    aiGames=100
+    cycle=int(sys.argv[1])
+    ncycle=6
+    pred=predict.Predict(cycle,ncycle)
+    rec=record.Record(cycle,ncycle)
+
 while 1:
     if game.over:
-	if mode=='AI':
-	    rec.recordGame()
-            avgS=rec.averageScore()
-            sys.stdout.write('\rGame:%4d/%d   R-Score(avg): %.4f   H-Score(avg): %.4f' % (rec.nGames,aiGames,avgS[1],avgS[0]))
+        if mode=='AI':
+            rec.recordGame()
+            stats=rec.scoreStats()
+            sys.stdout.write('\rGame:%4d/%d   R-Score(avg/var): %.3f/%.3f   H-Score(avg): %.3f' % (rec.nGames,aiGames,stats[0],stats[1],stats[0]))
             sys.stdout.flush()
             if rec.nGames==aiGames:
                 print ''
                 break
-	    game.reset()
-	    game.start()
-	else:
-            break
+            game.reset()
+            game.start()
+    else:
+        break
     if tick==-1:
         tick = pygame.time.get_ticks()
 
@@ -77,14 +82,14 @@ while 1:
             tick = pygame.time.get_ticks()
             game.nextIter()
     elif mode=='AI':
-	for i in range(3):
+        for i in range(3):
             boards=[game.previewBoard(i) for i in range(5)]
-	    bestOper=predict.predictOper(boards,cycle)
+            bestOper=pred.predictOper(boards)
             if bestOper==4:
                 break
-            opers[bestOper]()
-            rec.recordBoard(game.getState(),game.score)
-	game.nextIter()
+        opers[bestOper]()
+        rec.recordBoard(game.getState(),game.score)
+        game.nextIter()
 
 
     game.clearLines()
