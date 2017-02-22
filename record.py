@@ -33,12 +33,11 @@ class Record:
     def recordGame(self,score):
         self.nGames+=1
         self.rawScores.append(score)
-        length=len(self.currGameBoards)
 
         for i,board in enumerate(self.currGameBoards):
             self.allGameBoards.append(board)
 
-            if i==length-1:
+            if i==len(self.currGameBoards)-1:
                 reward=-5
             else:
                 reward=self.currScores[i+1]-self.currScores[i]
