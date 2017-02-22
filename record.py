@@ -21,19 +21,18 @@ class Record:
         self.ncycle=ncycle
         self.nGames=0
         self.allScores=[]
-        self.rawScores=[0]
+        self.rawScores=[]
         self.currScores=[]
         self.allGameBoards=[]
         self.currGameBoards=[]
 
     def recordBoard(self,board,score):
-        self.rawScores[-1]=score
         self.currScores.append(evalBoard(np.array(board),score))
         self.currGameBoards.append(np.array(board))
 
-    def recordGame(self):
+    def recordGame(self,score):
         self.nGames+=1
-        self.rawScores.append(0)
+        self.rawScores.append(score)
         length=len(self.currGameBoards)
 
         for i,board in enumerate(self.currGameBoards):
@@ -57,7 +56,6 @@ class Record:
     def saveRecord(self):
         npBoards = np.array(self.allGameBoards).reshape((len(self.allGameBoards),1,22,10))
         npScores = np.array(self.allScores)
-        del self.rawScores[-1]
         nprScores = np.array(self.rawScores)
         n=self.cycle%ncycle
         np.save('data/boards%d.npy' % n,npBoards)

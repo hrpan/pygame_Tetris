@@ -26,7 +26,7 @@ game.start()
 tick=-1
 
 if mode=='AI':
-    aiGames=100
+    aiGames=10
     cycle=int(sys.argv[1])
     ncycle=6
     pred=predict.Predict(cycle,ncycle)
@@ -35,17 +35,17 @@ if mode=='AI':
 while 1:
     if game.over:
         if mode=='AI':
-            rec.recordGame()
+            rec.recordGame(game.score)
             stats=rec.scoreStats()
-            sys.stdout.write('\rGame:%4d/%d   R-Score(avg/var): %.3f/%.3f   H-Score(avg): %.3f' % (rec.nGames,aiGames,stats[0],stats[1],stats[0]))
+            sys.stdout.write('\rGame:%4d/%d   R-Score(avg/var): %.3f/%.3f   H-Score(avg): %.3f' % (rec.nGames,aiGames,stats[0],stats[1],stats[2]))
             sys.stdout.flush()
             if rec.nGames==aiGames:
                 print ''
                 break
             game.reset()
             game.start()
-    else:
-        break
+        else:
+            break
     if tick==-1:
         tick = pygame.time.get_ticks()
 
@@ -87,8 +87,8 @@ while 1:
             bestOper=pred.predictOper(boards)
             if bestOper==4:
                 break
-        opers[bestOper]()
-        rec.recordBoard(game.getState(),game.score)
+            opers[bestOper]()
+            rec.recordBoard(game.getState(),game.score)
         game.nextIter()
 
 
@@ -97,5 +97,6 @@ while 1:
     vis.drawBoard(game,screen)
     
     pygame.display.flip()
+
 if mode=='AI':
     rec.saveRecord()
