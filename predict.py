@@ -11,14 +11,20 @@ slope=0.01
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
-def predictOper(boards,var):
-    boards = np.array(boards).reshape((5,1,22,10))
-    predicts = model.predict(boards)
-    epsilon=1-sigmoid(var) 
-    prob=np.ones((5))*(epsilon/4)
-    prob[np.argmax(predicts)]=1-epsilon
-    roll=np.random.choice(opers,p=prob)
-    
-    #roll=np.argmax(predicts)
-    return roll
+class Predict:
+	def __init__(self,cycle,ncycle):
+		self.cycle=cycle
+		self.ncycle=ncycle
+		n = (self.cycle-1)%self.ncycles
+		rScores = np.load('data/rScores%d.npy' % n)
+		self.var = 	np.var(rScores)	
+		self.eps = 1-sigmoid(self.var)
+
+	def predictOper(self,boards):
+		self.boards = np.array(boards).reshape((5,1,22,10))
+		predicts = model.predict(boards)
+		prob = np.ones((5))*(self.eps/4)
+		prob[np.argmax(predicts)] = 1-self.eps
+		return np.random.choice(opers,p=prob)
+
 
