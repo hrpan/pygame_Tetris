@@ -2,8 +2,8 @@ import numpy as np
 import os.path
 
 gamma=0.75
-decay_length=15
-ncycle=4
+decay_length=20
+ncycle=6
 
 def evalBoard(board,score):
     penalty=0
@@ -44,8 +44,8 @@ class Record:
                     self.allScores[-1-j]+=reward*np.power(gamma,j)
         self.currGameBoards=[]
         self.currScores=[]
-    def averageScore(self):
-        return np.average(self.allScores),np.average(self.rawScores)
+    def scoreStats(self):
+        return np.average(self.rawScores),np.var(self.rawScores),np.average(self.allScores)
     def saveRecord(self):
         npBoards = np.array(self.allGameBoards).reshape((len(self.allGameBoards),1,22,10))
         npScores = np.array(self.allScores)
