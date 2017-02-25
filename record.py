@@ -2,8 +2,8 @@ import numpy as np
 import os.path
 
 gamma=0.8
-decay_length=30
-ncycle=6
+eps=1e-5
+ncycle=4
 
 def evalBoard(board,score):
     penalty=0
@@ -44,9 +44,10 @@ class Record:
 
             self.allScores.append(reward)
             if reward!=0:
-                length = min(decay_length,len(self.allScores))
-                for j in range(1,length):
-                    self.allScores[-1-j]+=reward*np.power(gamma,j)
+                n=1
+                while gamma**n>eps and n<len(self.allScores):
+                    self.allScores[-1-n]+=reward*(gamma**n)
+                    n+=1
 
         self.currGameBoards=[]
         self.currScores=[]
