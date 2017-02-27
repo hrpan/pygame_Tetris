@@ -24,7 +24,7 @@ class Predict:
             self.var = 1000
         """
         #self.eps = 1-sigmoid(self.var)
-        self.eps = np.exp(-0.05*cycle)
+        self.eps = max(np.exp(-0.05*cycle),0.005)
 
     def predictOper(self,boards):
         boards = np.array(boards).reshape((5,1,22,10))

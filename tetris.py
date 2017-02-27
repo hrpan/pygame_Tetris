@@ -26,7 +26,7 @@ game.start()
 tick=-1
 
 if mode=='AI':
-    aiGames=10
+    aiGames=300
     cycle=int(sys.argv[1])
     ncycle=6
     pred=predict.Predict(cycle,ncycle)

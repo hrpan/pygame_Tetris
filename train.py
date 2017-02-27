@@ -21,5 +21,5 @@ weight = np.exp(scale*scores)
 
 model = load_model('model/model.h5')
 #model.fit(x_train,y_train,batch_size=32,nb_epoch=1,sample_weight=weight)
-model.fit(x_train,y_train,batch_size=256,nb_epoch=1)
+model.fit(x_train,y_train,batch_size=1024,nb_epoch=1)
 model.save('model/model.h5')
