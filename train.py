@@ -1,25 +1,31 @@
 from keras.models import load_model
-import theano
 import numpy as np
 import os.path
 
-theano.config.openmp=True
-
+        
 x_train = np.load('data/boards0.npy')
-scores = np.load('data/scores0.npy')
-
-scale=0.0
+y_train = np.load('data/scores0.npy')
 
 n=1
 while os.path.isfile('data/boards%d.npy' % n):
     x_train = np.concatenate((x_train,np.load('data/boards%d.npy' %n)))
-    scores = np.concatenate((scores,np.load('data/scores%d.npy' %n)))
+    y_train = np.concatenate((y_train,np.load('data/scores%d.npy' %n)))
     n+=1
 
-y_train = scores
-weight = np.exp(scale*scores)
+#============================================
+
+nbins=10000
+eps=1e-5
+bins=np.linspace(np.amin(y_train)-eps,np.amax(y_train)+eps,nbins)
+hist=np.histogram(y_train,bins=bins,density=True)
+idx=np.digitize(y_train,bins)
+weights = np.array([1/hist[0][x-1] for x in idx])
+
+#============================================
 
 model = load_model('model/model.h5')
-#model.fit(x_train,y_train,batch_size=32,nb_epoch=1,sample_weight=weight)
-model.fit(x_train,y_train,batch_size=1024,nb_epoch=1)
+model.fit(x_train,y_train,batch_size=128,nb_epoch=1,sample_weight=weights)
+#model.fit(x_train,y_train,batch_size=1024,nb_epoch=1)
 model.save('model/model.h5')
+
+#============================================
