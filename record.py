@@ -59,7 +59,7 @@ class Record:
         return np.average(self.rawScores),np.var(self.rawScores),np.average(self.allScores)
 
     def saveRecord(self):
-        npBoards = np.array(self.allGameBoards).reshape((len(self.allGameBoards),1,22,10))
+        npBoards = np.array(self.allGameBoards,dtype='int8').reshape((len(self.allGameBoards),22,10,1))
         npScores = np.array(self.allScores)
         nprScores = np.array(self.rawScores)
         n=self.cycle%self.ncycle
