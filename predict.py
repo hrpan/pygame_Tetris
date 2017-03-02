@@ -25,7 +25,7 @@ class Predict:
         self.eps = max(np.exp(-0.05*cycle),cfg.eps_pred)
 
     def predictOper(self,boards):
-        boards = np.array(boards).reshape((5,1,22,10))
+        boards = np.array(boards).reshape((5,22,10,1))
         predicts = self.model.predict(boards)
         if np.random.rand()>self.eps:
             roll = np.argmax(predicts)
