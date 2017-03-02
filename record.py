@@ -1,10 +1,8 @@
 import numpy as np
 import os.path
+from config import Config
 
-gamma=0.8
-eps=1e-5
-ncycle=4
-
+"""
 def evalBoard(board,score):
     penalty=0
     for i,j in np.transpose(np.where(board==1)):
@@ -14,18 +12,24 @@ def evalBoard(board,score):
             else:
                 break
     return score-0.2*penalty
+"""
+
+def evalBoard(board,score):
+    return score
 
 class Record:
-    def __init__(self,cycle,ncycle):
+    def __init__(self,cycle):
+        cfg=Config()
         self.cycle=cycle
-        self.ncycle=ncycle
+        self.ncycle=cfg.ncycle
         self.nGames=0
         self.allScores=[]
         self.rawScores=[]
         self.currScores=[]
         self.allGameBoards=[]
         self.currGameBoards=[]
-
+        self.gamma=cfg.gamma_td
+        self.eps=cfg.eps_td
     def recordBoard(self,board,score):
         self.currScores.append(evalBoard(np.array(board),score))
         self.currGameBoards.append(np.array(board))
@@ -38,15 +42,15 @@ class Record:
             self.allGameBoards.append(board)
 
             if i==len(self.currGameBoards)-1:
-                reward=-5
+                reward=-3
             else:
                 reward=self.currScores[i+1]-self.currScores[i]
 
             self.allScores.append(reward)
             if reward!=0:
                 n=1
-                while gamma**n>eps and n<len(self.allScores):
-                    self.allScores[-1-n]+=reward*(gamma**n)
+                while self.gamma**n>self.eps and n<len(self.allScores):
+                    self.allScores[-1-n]+=reward*(self.gamma**n)
                     n+=1
 
         self.currGameBoards=[]
@@ -58,7 +62,7 @@ class Record:
         npBoards = np.array(self.allGameBoards).reshape((len(self.allGameBoards),1,22,10))
         npScores = np.array(self.allScores)
         nprScores = np.array(self.rawScores)
-        n=self.cycle%ncycle
+        n=self.cycle%self.ncycle
         np.save('data/boards%d.npy' % n,npBoards)
         np.save('data/scores%d.npy' % n,npScores)
         np.save('data/rScores%d.npy' % n,nprScores)

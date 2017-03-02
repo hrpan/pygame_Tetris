@@ -7,13 +7,11 @@ Created on Tue Feb 07 03:57:47 2017
 import sys, pygame
 import vis
 import core
-import predict
-import record
+from predict import Predict
+from record import Record
+from config import Config
 
-
-mode='AI'
-#mode='PLAY'
-
+cfg=Config()
 
 pygame.init()
 font = pygame.font.SysFont("monospace",16)
@@ -21,25 +19,24 @@ font = pygame.font.SysFont("monospace",16)
 screen = vis.visInit()
 
 game = core.Tetris()
-opers=[game.rotateCCW,game.rotateCW,game.moveLeft,game.moveRight]
 game.start()
 tick=-1
 
-if mode=='AI':
-    aiGames=300
+if cfg.mode=='AI':
+    opers=[game.rotateCCW,game.rotateCW,game.moveLeft,game.moveRight]
     cycle=int(sys.argv[1])
-    ncycle=6
-    pred=predict.Predict(cycle,ncycle)
-    rec=record.Record(cycle,ncycle)
+    pred=Predict(cycle)
+    rec=Record(cycle)
 
 while 1:
     if game.over:
-        if mode=='AI':
+        if cfg.mode=='AI':
             rec.recordGame(game.score)
             stats=rec.scoreStats()
-            sys.stdout.write('\rGame:%4d/%d   R-Score(avg/var): %.3f/%.3f   H-Score(avg): %.3f' % (rec.nGames,aiGames,stats[0],stats[1],stats[2]))
+            sys.stdout.write('\rGame:%4d/%d   R-Score(avg/var): %.3f/%.3f   H-Score(avg): %.3f' 
+                        % (rec.nGames,cfg.aiGames,stats[0],stats[1],stats[2]))
             sys.stdout.flush()
-            if rec.nGames==aiGames:
+            if rec.nGames==cfg.aiGames:
                 print ''
                 break
             game.reset()
@@ -49,7 +46,7 @@ while 1:
     if tick==-1:
         tick = pygame.time.get_ticks()
 
-    if mode=='PLAY':        
+    if cfg.mode=='PLAY':        
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 print ''
@@ -81,13 +78,12 @@ while 1:
         if (pygame.time.get_ticks()-tick)>1500:
             tick = pygame.time.get_ticks()
             game.nextIter()
-    elif mode=='AI':
+    elif cfg.mode=='AI':
         for i in range(3):
             boards=[game.previewBoard(i) for i in range(5)]
             bestOper=pred.predictOper(boards)
-            if bestOper==4:
-                break
-            opers[bestOper]()
+            if bestOper!=4:
+                opers[bestOper]()
             rec.recordBoard(game.getState(),game.score)
         game.nextIter()
 
@@ -98,5 +94,5 @@ while 1:
     
     pygame.display.flip()
 
-if mode=='AI':
+if cfg.mode=='AI':
     rec.saveRecord()

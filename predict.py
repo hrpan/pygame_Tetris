@@ -1,6 +1,6 @@
 from keras.models import load_model
 import numpy as np
-
+from config import Config
 
 slope=0.01
 
@@ -8,10 +8,11 @@ def sigmoid(x):
     return 1/(1+np.exp(-x))
 
 class Predict:
-    def __init__(self,cycle,ncycle):
+    def __init__(self,cycle):
+        cfg=Config()
         self.model=load_model('model/model.h5')
         self.cycle=cycle
-        self.ncycle=ncycle
+        self.ncycle=cfg.ncycle
         """
         if cycle>0:
             n = (cycle-1)%ncycle
@@ -21,7 +22,7 @@ class Predict:
             self.var = 1000
         """
         #self.eps = 1-sigmoid(self.var)
-        self.eps = max(np.exp(-0.05*cycle),0.05)
+        self.eps = max(np.exp(-0.05*cycle),cfg.eps_pred)
 
     def predictOper(self,boards):
         boards = np.array(boards).reshape((5,1,22,10))
