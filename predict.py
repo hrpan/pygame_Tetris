@@ -26,8 +26,8 @@ class Predict:
 
     def predictOper(self,boards):
         boards = np.array(boards).reshape((5,22,10,1))
-        predicts = self.model.predict(boards)
         if np.random.rand()>self.eps:
+            predicts = self.model.predict(boards)
             roll = np.argmax(predicts)
         else:
             roll = np.random.choice(range(5))
