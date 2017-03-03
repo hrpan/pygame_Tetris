@@ -33,7 +33,7 @@ class Record:
     def recordBoard(self,board,score):
         self.currScores.append(evalBoard(np.array(board),score))
         self.currGameBoards.append(np.array(board))
-
+        
     def recordGame(self,score):
         self.nGames+=1
         self.rawScores.append(score)
@@ -42,14 +42,14 @@ class Record:
             self.allGameBoards.append(board)
 
             if i==len(self.currGameBoards)-1:
-                reward=-3
+                reward=0
             else:
                 reward=self.currScores[i+1]-self.currScores[i]
 
             self.allScores.append(reward)
             if reward!=0:
                 n=1
-                while self.gamma**n>self.eps and n<len(self.allScores):
+                while self.gamma**n>self.eps and n<i+1:
                     self.allScores[-1-n]+=reward*(self.gamma**n)
                     n+=1
 
