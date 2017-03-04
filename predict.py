@@ -13,16 +13,7 @@ class Predict:
         self.model=load_model('model/model.h5')
         self.cycle=cycle
         self.ncycle=cfg.ncycle
-        """
-        if cycle>0:
-            n = (cycle-1)%ncycle
-            rScores = np.load('data/rScores%d.npy' % n)
-            self.var = np.var(rScores) 
-        else:
-            self.var = 1000
-        """
-        #self.eps = 1-sigmoid(self.var)
-        self.eps = max(np.exp(-0.05*cycle),cfg.eps_pred)
+        self.eps = max(np.exp(-cfg.eps_decay_rate*cycle),cfg.eps_pred)
 
     def predictOper(self,boards):
         boards = np.array(boards).reshape((5,22,10,1))

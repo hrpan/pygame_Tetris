@@ -24,4 +24,5 @@ class Config:
                 self.aiGames=int(line.replace('AIGAMES=',''))
             elif 'GAMEMODE=' in line:
                 self.mode=line.replace('GAMEMODE=','')
-             
+            elif 'EPS_DECAY_RATE=' in line:
+                self.eps_decay_rate=float(line.replace('EPS_DECAY_RATE=',''))             
