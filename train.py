@@ -15,19 +15,20 @@ while os.path.isfile('data/boards%d.npy' % n):
     n+=1
 
 #============================================
-
-nbins=10000
-eps=1e-5
-bins=np.linspace(np.amin(y_train)-eps,np.amax(y_train)+eps,nbins)
-hist=np.histogram(y_train,bins=bins,density=True)
-idx=np.digitize(y_train,bins)
-weights = np.array([1/hist[0][x-1] for x in idx])
-
+if cfg.use_sample_weight:
+    nbins=100
+    eps=1e-5
+    bins=np.linspace(np.amin(y_train)-eps,np.amax(y_train)+eps,nbins)
+    hist=np.histogram(y_train,bins=bins,density=True)
+    idx=np.digitize(y_train,bins)
+    weights = np.array([1/hist[0][x-1] for x in idx])
 #============================================
 
 model = load_model('model/model.h5')
-#model.fit(x_train,y_train,batch_size=128,nb_epoch=1,sample_weight=weights)
-model.fit(x_train,y_train,batch_size=cfg.batch_size,nb_epoch=cfg.epochs)
+if cfg.use_sample_weight:
+    model.fit(x_train,y_train,batch_size=cfg.batch_size,nb_epoch=cfg.epochs,sample_weight=weights)
+else:
+    model.fit(x_train,y_train,batch_size=cfg.batch_size,nb_epoch=cfg.epochs)
 model.save('model/model.h5')
 
 #============================================
