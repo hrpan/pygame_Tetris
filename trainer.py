@@ -2,7 +2,7 @@ from keras.models import load_model
 import numpy as np
 
 def reformat(y):
-    scores=np.zeros((len(y_train),5))
+    scores=np.zeros((len(y),5))
     for i,y in enumerate(y):
         scores[i][min(int(y),4)]=1
     return scores 
@@ -22,7 +22,7 @@ class Trainer:
         self.x_train=np.concatenate(x_array)
         self.y_train=reformat(np.concatenate(y_array))
     def loadModel(self,modelFile):
-        self.model=load_model(self.modelFile)
+        self.model=load_model(modelFile)
         self.modelFile=modelFile
     def trainModel(self):
         self.model.fit(self.x_train,self.y_train,self.batch_size,self.epochs)
