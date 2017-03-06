@@ -12,12 +12,11 @@ trainer=Trainer(cfg)
 
 trainer.loadModel(cfg.modelFile)
 
-n=0
 prefix='data/'
 fileArray=[]
-while os.path.isfile(dataPath(prefix,n)[0]):
-    fileArray.append(dataPath(prefix,n))
-
+for n in range(cfg.ncycle):
+    if os.path.isfile(dataPath(prefix,n)[0]):
+        fileArray.append(dataPath(prefix,n))
 trainer.loadData(fileArray)
 trainer.trainModel()
 trainer.saveModel()
