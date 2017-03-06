@@ -25,4 +25,11 @@ class Config:
             elif 'GAMEMODE=' in line:
                 self.mode=line.replace('GAMEMODE=','')
             elif 'EPS_DECAY_RATE=' in line:
-                self.eps_decay_rate=float(line.replace('EPS_DECAY_RATE=',''))             
+                self.eps_decay_rate=float(line.replace('EPS_DECAY_RATE=',''))            
+            elif 'PRETRAIN=' in line:
+                if line.replace('PRETRAIN=','')=='True':
+                    self.preTrain=True
+                elif line.replace('PRETRAIN=','')=='False':
+                    self.preTrain=False 
+            elif 'MODELFILE=' in line:
+                self.modelFile=line.replace('MODELFILE=','')
