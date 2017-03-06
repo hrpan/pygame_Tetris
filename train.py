@@ -1,34 +1,36 @@
-from keras.models import load_model
-import numpy as np
 import os.path
 from config import Config
+from trainer import Trainer
 
-cfg = Config()
-        
-x_train = np.load('data/boards0.npy')
-y_train = np.load('data/scores0.npy')
+def dataPath(prefix,n):
+    return (prefix+'boards%d.npy'%n,prefix+'scores%d.npy'%n)
 
-n=1
-while os.path.isfile('data/boards%d.npy' % n):
-    x_train = np.concatenate((x_train,np.load('data/boards%d.npy' %n)))
-    y_train = np.concatenate((y_train,np.load('data/scores%d.npy' %n)))
-    n+=1
+
+cfg=Config()
+
+trainer=Trainer(cfg)
+
+trainer.loadModel(cfg.modelFile)
+
+n=0
+prefix='data/'
+fileArray=[]
+while os.path.isfile(dataPath(prefix,n)[0]):
+    fileArray.append(dataPath(prefix,n))
+
+trainer.loadData(fileArray)
+trainer.trainModel()
+trainer.saveModel()
 
 #============================================
-if cfg.use_sample_weight:
+"""if cfg.use_sample_weight:
     nbins=100
     eps=1e-5
     bins=np.linspace(np.amin(y_train)-eps,np.amax(y_train)+eps,nbins)
     hist=np.histogram(y_train,bins=bins,density=True)
     idx=np.digitize(y_train,bins)
     weights = np.array([1/hist[0][x-1] for x in idx])
-#============================================
-
-model = load_model('model/model.h5')
-if cfg.use_sample_weight:
-    model.fit(x_train,y_train,batch_size=cfg.batch_size,nb_epoch=cfg.epochs,sample_weight=weights)
 else:
-    model.fit(x_train,y_train,batch_size=cfg.batch_size,nb_epoch=cfg.epochs)
-model.save('model/model.h5')
-
+    weights = np.array([1 for x in y_train])
+"""
 #============================================
