@@ -47,12 +47,13 @@ class Record:
                 reward=self.currScores[i+1]-self.currScores[i]
 
             self.allScores.append(reward)
+            """
             if reward!=0:
                 n=1
                 while self.gamma**n>self.eps and n<i+1:
                     self.allScores[-1-n]+=reward*(self.gamma**n)
                     n+=1
-
+            """
         self.currGameBoards=[]
         self.currScores=[]
     def scoreStats(self):
