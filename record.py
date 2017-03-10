@@ -28,8 +28,6 @@ class Record:
         self.currScores=[]
         self.allGameBoards=[]
         self.currGameBoards=[]
-        self.gamma=cfg.gamma_td
-        self.eps=cfg.eps_td
     def recordBoard(self,board,score):
         self.currScores.append(evalBoard(np.array(board),score))
         self.currGameBoards.append(np.array(board))
@@ -42,18 +40,11 @@ class Record:
             self.allGameBoards.append(board)
 
             if i==len(self.currGameBoards)-1:
-                reward=0
+                reward=-1
             else:
                 reward=self.currScores[i+1]-self.currScores[i]
 
             self.allScores.append(reward)
-            """
-            if reward!=0:
-                n=1
-                while self.gamma**n>self.eps and n<i+1:
-                    self.allScores[-1-n]+=reward*(self.gamma**n)
-                    n+=1
-            """
         self.currGameBoards=[]
         self.currScores=[]
     def scoreStats(self):
@@ -61,7 +52,7 @@ class Record:
 
     def saveRecord(self):
         npBoards = np.array(self.allGameBoards,dtype='int8').reshape((len(self.allGameBoards),22,10,1))
-        npScores = np.array(self.allScores)
+        npScores = np.array(self.allScores,dtype='float32')
         nprScores = np.array(self.rawScores)
         n=self.cycle%self.ncycle
         np.save('data/boards%d.npy' % n,npBoards)
