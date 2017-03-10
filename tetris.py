@@ -22,7 +22,7 @@ game = core.Tetris()
 game.start()
 tick=-1
 
-if cfg.mode=='AI':
+if cfg.gamemode=='AI':
     opers=[game.rotateCCW,game.rotateCW,game.moveLeft,game.moveRight]
     cycle=int(sys.argv[1])
     pred=Predict(cycle)
@@ -30,13 +30,13 @@ if cfg.mode=='AI':
 
 while 1:
     if game.over:
-        if cfg.mode=='AI':
+        if cfg.gamemode=='AI':
             rec.recordGame(game.score)
             stats=rec.scoreStats()
             sys.stdout.write('\rGame:%4d/%d   R-Score(avg/var): %.3f/%.3f   H-Score(avg): %.3f' 
-                        % (rec.nGames,cfg.aiGames,stats[0],stats[1],stats[2]))
+                        % (rec.nGames,cfg.aigames,stats[0],stats[1],stats[2]))
             sys.stdout.flush()
-            if rec.nGames==cfg.aiGames:
+            if rec.nGames==cfg.aigames:
                 print ''
                 break
             game.reset()
@@ -46,7 +46,7 @@ while 1:
     if tick==-1:
         tick = pygame.time.get_ticks()
 
-    if cfg.mode=='PLAY':        
+    if cfg.gamemode=='PLAY':        
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 print ''
@@ -78,7 +78,7 @@ while 1:
         if (pygame.time.get_ticks()-tick)>1500:
             tick = pygame.time.get_ticks()
             game.nextIter()
-    elif cfg.mode=='AI':
+    elif cfg.gamemode=='AI':
         for i in range(3):
             boards=[game.previewBoard(i) for i in range(5)]
             bestOper=pred.predictOper(boards)
@@ -94,5 +94,5 @@ while 1:
     
     pygame.display.flip()
 
-if cfg.mode=='AI':
+if cfg.gamemode=='AI':
     rec.saveRecord()

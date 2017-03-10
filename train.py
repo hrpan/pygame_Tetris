@@ -1,3 +1,4 @@
+import sys
 import os.path
 from config import Config
 from trainer import Trainer
@@ -5,12 +6,13 @@ from trainer import Trainer
 def dataPath(prefix,n):
     return (prefix+'boards%d.npy'%n,prefix+'scores%d.npy'%n)
 
+cycle=int(sys.argv[1])
 
 cfg=Config()
 
-trainer=Trainer(cfg)
+trainer=Trainer(cfg,cycle)
 
-trainer.loadModel(cfg.modelFile)
+trainer.loadModel(cfg.modelfile)
 
 prefix='data/'
 fileArray=[]
