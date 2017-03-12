@@ -17,17 +17,18 @@ class Trainer:
         for x,y in trainFiles:
             x_array.append(np.load(x))
             y_array.append(np.load(y))
-        self.x_train=np.concatenate(x_array)
-        self.y_train=np.concatenate(y_array)
+        self.x=np.concatenate(x_array)
+        self.y=np.concatenate(y_array)
     def v_iter(self):
-        length = len(self.y_train)
-        y_pred = self.model.predict(self.x_train,1024)
+        length = len(self.y)
+        self.y_train=np.empty(length)
+        y_pred = self.model.predict(self.x,1024)
         for i in range(length):
-            if self.y_train[i]==-1:
+            if self.y[i]==-1:
                 self.y_train[i]=0
             else:
-                delta=self.y_train[i]+self.gamma_td*y_pred[i+1]-y_pred[i]
-                self.y_train[i]=y_pred[i]+(1+self.cycle)**(-0.75)*delta
+                delta=self.y[i]+self.gamma_td*y_pred[i+1]-y_pred[i]
+                self.y_train[i]=y_pred[i]+self.lr_td*delta
     def getWeight(self):
         eps=1e-7
         binning=np.linspace(np.amin(self.y_train)-eps,np.amax(self.y_train)+eps,self.nbins)
@@ -38,12 +39,13 @@ class Trainer:
         self.model=load_model(modelFile)
         self.modelFile=modelFile
     def trainModel(self):
-        self.v_iter()
-        if self.use_sample_weight:
-            weight=self.getWeight()
-        else:
-            weight=None
-        self.model.fit(self.x_train,self.y_train,self.batch_size,self.epochs,sample_weight=weight)
+        for i in range(self.epochs):
+            self.v_iter()
+            if self.use_sample_weight:
+                weight=self.getWeight()
+            else:
+                weight=None
+            self.model.fit(self.x,self.y_train,self.batch_size,1,sample_weight=weight)
     def saveModel(self):
         self.model.save(self.modelFile)
 
