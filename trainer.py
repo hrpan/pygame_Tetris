@@ -22,7 +22,7 @@ class Trainer:
     def v_iter(self):
         length = len(self.y)
         self.y_train=np.empty(length)
-        y_pred = self.model.predict(self.x,1024)
+        y_pred = self.model.predict(self.x)
         for i in range(length):
             if self.y[i]==-1:
                 self.y_train[i]=0
