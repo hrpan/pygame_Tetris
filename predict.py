@@ -19,7 +19,7 @@ class Predict:
         self.model=load_model(cfg.modelfile)
         self.cycle=cycle
         self.ncycle=cfg.ncycle
-        self.eps = max(exp(-cfg.eps_decay_rate*cycle)),cfg.eps_pred)
+        self.eps = max(np.exp(-cfg.eps_decay_rate*cycle),cfg.eps_pred)
 
     def predictOper(self,boards):
         boards = np.array(boards).reshape((5,22,10,1))
