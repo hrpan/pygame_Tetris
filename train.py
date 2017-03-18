@@ -3,8 +3,10 @@ import os.path
 from config import Config
 from trainer import Trainer
 
+special_data=('data/sample/boards.npy','data/sample/scores.npy','data/sample/actions.npy')
+
 def dataPath(prefix,n):
-    return (prefix+'boards%d.npy'%n,prefix+'scores%d.npy'%n)
+    return (prefix+'boards%d.npy'%n,prefix+'scores%d.npy'%n,prefix+'actions%d.npy'%n)
 
 cycle=int(sys.argv[1])
 
@@ -19,6 +21,8 @@ fileArray=[]
 for n in range(cfg.ncycle):
     if os.path.isfile(dataPath(prefix,n)[0]):
         fileArray.append(dataPath(prefix,n))
+if os.path.isfile(special_data[0]):
+    fileArray.append(special_data)
 trainer.loadData(fileArray)
 trainer.trainModel()
 trainer.saveModel()
