@@ -22,11 +22,11 @@ class Predict:
         self.eps = max(np.exp(-cfg.eps_decay_rate*cycle),cfg.eps_pred)
 
     def predictOper(self,boards):
-        boards = np.array(boards).reshape((5,22,10,1))
+        boards = np.array(boards).reshape((1,22,10,1))[:,2:22,:,:]
         if np.random.rand()>self.eps:
             predicts = self.model.predict(boards)
             #expected = np.array([expected_value(x) for x in predicts])
-            roll = np.argmax(predicts)
+            roll=np.argmax(predicts[0])
         else:
             roll = np.random.choice(range(5))
         return roll
