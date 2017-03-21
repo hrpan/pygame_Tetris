@@ -79,12 +79,11 @@ while 1:
             tick = pygame.time.get_ticks()
             game.nextIter()
     elif cfg.gamemode=='AI':
-        for i in range(3):
-            boards=[game.previewBoard(i) for i in range(5)]
-            bestOper=pred.predictOper(boards)
+        for i in range(cfg.aisteps):
+            bestOper=pred.predictOper(game.getState())
+            rec.recordBoard(game.getState(),game.score,bestOper)
             if bestOper!=4:
                 opers[bestOper]()
-            rec.recordBoard(game.getState(),game.score)
         game.nextIter()
 
 
