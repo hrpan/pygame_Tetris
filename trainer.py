@@ -14,38 +14,36 @@ class Trainer:
     def loadData(self,trainFiles):
         x_array=[]
         y_array=[]
-        for x,y in trainFiles:
+        a_array=[]
+        for x,y,a in trainFiles:
             x_array.append(np.load(x))
             y_array.append(np.load(y))
+            a_array.append(np.load(a))
         self.x=np.concatenate(x_array)
         self.y=np.concatenate(y_array)
-    def v_iter(self):
+        self.a=np.concatenate(a_array)
+    def reformat(self):
         length = len(self.y)
-        self.y_train=np.empty(length)
-        y_pred = self.model.predict(self.x)
+        self.y_train=np.zeros((length,5))
         for i in range(length):
-            if self.y[i]==-1:
-                self.y_train[i]=0
-            else:
-                delta=self.y[i]+self.gamma_td*y_pred[i+1]-y_pred[i]
-                self.y_train[i]=y_pred[i]+self.lr_td*delta
+            self.y_train[i][self.a[i]]=1
     def getWeight(self):
-        eps=1e-7
-        binning=np.linspace(np.amin(self.y_train)-eps,np.amax(self.y_train)+eps,self.nbins)
-        hist=np.histogram(self.y_train,binning,density=True)
-        idx=np.digitize(self.y_train,binning)
-        return np.array([1/hist[0][x-1] for x in idx])
+        weight=np.array(self.y,dtype='float32')
+        for i in reversed(range(len(weight))):
+            if weight[i]==-1:
+                weight[i]=0
+            else:
+                weight[i]+=weight[i+1]   
+        baseline=-0.5
+        weight-=baseline
+        return weight
     def loadModel(self,modelFile):
         self.model=load_model(modelFile)
         self.modelFile=modelFile
     def trainModel(self):
-        for i in range(self.epochs):
-            self.v_iter()
-            if self.use_sample_weight:
-                weight=self.getWeight()
-            else:
-                weight=None
-            self.model.fit(self.x,self.y_train,self.batch_size,1,sample_weight=weight)
+        self.reformat()
+        weight=self.getWeight()
+        self.model.fit(self.x,self.y_train,self.batch_size,self.epochs,sample_weight=weight)
     def saveModel(self):
         self.model.save(self.modelFile)
 
