@@ -28,17 +28,19 @@ class Record:
         self.currScores=[]
         self.allGameBoards=[]
         self.currGameBoards=[]
-    def recordBoard(self,board,score):
+        self.allActions=[]
+        self.currActions=[]
+    def recordBoard(self,board,score,action):
         self.currScores.append(evalBoard(np.array(board),score))
         self.currGameBoards.append(np.array(board))
-        
+        self.currActions.append(action) 
     def recordGame(self,score):
         self.nGames+=1
         self.rawScores.append(score)
 
         for i,board in enumerate(self.currGameBoards):
             self.allGameBoards.append(board)
-
+            self.allActions.append(self.currActions[i])
             if i==len(self.currGameBoards)-1:
                 reward=-1
             else:
@@ -47,14 +49,17 @@ class Record:
             self.allScores.append(reward)
         self.currGameBoards=[]
         self.currScores=[]
+        self.currActions=[]
     def scoreStats(self):
         return np.average(self.rawScores),np.var(self.rawScores),np.average(self.allScores)
 
     def saveRecord(self):
-        npBoards = np.array(self.allGameBoards,dtype='int8').reshape((len(self.allGameBoards),22,10,1))
+        npBoards = np.array(self.allGameBoards,dtype='int8').reshape((len(self.allGameBoards),22,10,1))[:,2:22,:,:]
         npScores = np.array(self.allScores,dtype='float32')
         nprScores = np.array(self.rawScores)
+        npActions = np.array(self.allActions,dtype='int8')
         n=self.cycle%self.ncycle
         np.save('data/boards%d.npy' % n,npBoards)
         np.save('data/scores%d.npy' % n,npScores)
         np.save('data/rScores%d.npy' % n,nprScores)
+        np.save('data/actions%d.npy' % n,npActions)

@@ -4,7 +4,7 @@ from config import Config
 from trainer import Trainer
 
 def dataPath(prefix,n):
-    return (prefix+'boards%d.npy'%n,prefix+'scores%d.npy'%n)
+    return (prefix+'boards%d.npy'%n,prefix+'scores%d.npy'%n,prefix+'actions%d.npy'%n)
 
 cycle=int(sys.argv[1])
 
