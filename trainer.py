@@ -28,14 +28,18 @@ class Trainer:
         for i in range(length):
             self.y_train[i][self.a[i]]=1
     def getWeight(self):
+        eps=1e-7
         weight=np.array(self.y,dtype='float32')
         for i in reversed(range(len(weight))):
             if weight[i]==-1:
                 weight[i]=0
             else:
                 weight[i]+=weight[i+1]   
-        baseline=-0.5
+        baseline=np.average(weight)
+        #baseline=-0.5
         weight-=baseline
+        if np.all(weight==0):
+            weight-=eps
         return weight
     def loadModel(self,modelFile):
         self.model=load_model(modelFile)
