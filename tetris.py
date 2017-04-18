@@ -16,7 +16,8 @@ cfg=Config()
 pygame.init()
 font = pygame.font.SysFont("monospace",16)
 
-screen = vis.visInit()
+if cfg.display==True:
+    screen = vis.visInit()
 
 game = core.Tetris()
 game.start()
@@ -88,10 +89,10 @@ while 1:
 
 
     game.clearLines()
-    vis.drawScore(game,screen,font)
-    vis.drawBoard(game,screen)
-    
-    pygame.display.flip()
+    if cfg.display==True:
+        vis.drawScore(game,screen,font)
+        vis.drawBoard(game,screen)
+        pygame.display.flip()
 
 if cfg.gamemode=='AI':
     rec.saveRecord()
