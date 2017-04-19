@@ -16,7 +16,8 @@ cfg=Config()
 pygame.init()
 font = pygame.font.SysFont("monospace",16)
 
-screen = vis.visInit()
+if cfg.display==True:
+    screen = vis.visInit()
 
 game = core.Tetris()
 game.start()
@@ -80,19 +81,18 @@ while 1:
             game.nextIter()
     elif cfg.gamemode=='AI':
         for i in range(cfg.aisteps):
-            #boards=[game.previewBoard(i) for i in range(5)]
             bestOper=pred.predictOper(game.getState())
+            rec.recordBoard(game.getState(),game.score,bestOper)
             if bestOper!=4:
                 opers[bestOper]()
-            rec.recordBoard(game.getState(),game.score,bestOper)
         game.nextIter()
 
 
     game.clearLines()
-    vis.drawScore(game,screen,font)
-    vis.drawBoard(game,screen)
-    
-    pygame.display.flip()
+    if cfg.display==True:
+        vis.drawScore(game,screen,font)
+        vis.drawBoard(game,screen)
+        pygame.display.flip()
 
 if cfg.gamemode=='AI':
     rec.saveRecord()
