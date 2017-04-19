@@ -2,20 +2,37 @@ import numpy as np
 import os.path
 from config import Config
 
-"""
-def evalBoard(board,score):
-    penalty=0
-    for i,j in np.transpose(np.where(board==1)):
-        for k in range(i+1,22):
-            if board[k][j]==0 or board[k][j]==-1:
-                penalty+=1
-            else:
-                break
-    return score-0.2*penalty
-"""
+def floodfill(board,row,col,idx):
+    shape=board.shape
+    if row<0 or row>=shape[0] or col<0 or col>=shape[1]:
+        return False
+    else:
+        if board[row][col]==0 or board[row][col]==-1:
+            board[row][col]=idx
+            floodfill(board,row+1,col,idx)
+            floodfill(board,row-1,col,idx)
+            floodfill(board,row,col+1,idx)
+            floodfill(board,row,col-1,idx)
+            return True
+    return False
 
 def evalBoard(board,score):
+    board=board[2:22,:]
+    hole_idx=2
+    penalty=0
+    for idx,x in np.ndenumerate(board):
+        if x == 0 or x == -1:
+            floodfill(board,idx[0],idx[1],hole_idx)
+            penalty+=np.sum(board==hole_idx)**2
+            hole_idx+=1
+    hole_idx-=2
+    #print penalty
+    return score-0.3*hole_idx
+
+"""
+def evalBoard(board,score):
     return score
+"""
 
 class Record:
     def __init__(self,cycle):
