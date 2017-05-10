@@ -7,7 +7,7 @@ def floodfill(board,row,col,idx):
     if row<0 or row>=shape[0] or col<0 or col>=shape[1]:
         return False
     else:
-        if board[row][col]==0 or board[row][col]==-1:
+        if board[row][col]==0:
             board[row][col]=idx
             floodfill(board,row+1,col,idx)
             floodfill(board,row-1,col,idx)
@@ -16,18 +16,46 @@ def floodfill(board,row,col,idx):
             return True
     return False
 
+def getHeights(board):
+    height=np.array([0]*10)
+    for i in range(board.shape[1]):
+        pos=np.where(board[:,i]==1)[0]
+        if len(pos)>0:
+            height[i]=20-pos[0]
+        else:
+            height[i]=0
+    return height 
+
+def roughness(board):
+    height=getHeights(board)
+    return np.sum(np.ediff1d(height)*np.ediff1d(height))
+
+def caves(board):
+    height=20-getHeights(board)
+    cave=0
+    for col in range(board.shape[1]):
+        for row in range(height[col],board.shape[0]):
+            if board[row][col]==0:
+                cave+=1
+    return cave        
+
 def evalBoard(board,score):
     board=board[2:22,:]
     hole_idx=2
     penalty=0
+    penalty+=0.1*roughness(board)
+    #penalty+=0.1*np.average(getHeights(board))
+    penalty+=0.5*caves(board)
+    """
     for idx,x in np.ndenumerate(board):
         if x == 0 or x == -1:
             floodfill(board,idx[0],idx[1],hole_idx)
-            penalty+=np.sum(board==hole_idx)**2
+            #penalty+=np.sum(board==hole_idx)**2
             hole_idx+=1
     hole_idx-=2
-    #print penalty
-    return score-0.3*hole_idx
+    penalty+=0.3*hole_idx
+    """
+    return score-penalty
 
 """
 def evalBoard(board,score):
