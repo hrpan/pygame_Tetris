@@ -6,5 +6,5 @@ for ((i=0;i<$cycles;i++)); do
     echo "Cycle: $i"
     python tetris.py $i
     python train.py $i
-    python extract.py $i
+    #python extract.py $i
 done
