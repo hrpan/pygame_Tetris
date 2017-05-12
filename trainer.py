@@ -22,33 +22,33 @@ class Trainer:
         self.x=np.concatenate(x_array)
         self.y=np.concatenate(y_array)
         self.a=np.concatenate(a_array)
-    def v_iter(self):
-        length = len(self.y)
-        y_pred = self.model.predict(self.x)
-        self.y_train=np.array(y_pred)
-        for i in range(length):
-            if self.y[i]==-1:
-                self.y_train[i]=[0,0,0,0,0]
-            else:
-                action=self.a[i]
-                delta=self.y[i]+self.gamma_td*np.amax(y_pred[i+1])-y_pred[i][action]
-                self.y_train[i][action]=y_pred[i][action]+self.lr_td*delta
     def getWeight(self):
         eps=1e-7
-        binning=np.linspace(np.amin(self.y_train)-eps,np.amax(self.y_train)+eps,self.nbins)
-        hist=np.histogram(self.y_train,binning,density=True)
-        idx=np.digitize(self.y_train,binning)
+        binning=np.linspace(np.amin(self.y)-eps,np.amax(self.y)+eps,self.nbins)
+        hist=np.histogram(self.y,binning,density=True)
+        idx=np.digitize(self.y,binning)
         return np.array([1/hist[0][x-1] for x in idx])
     def loadModel(self,modelFile):
-        self.model=load_model(modelFile)
+        self.actor=load_model(modelFile[0])
+        self.critic=load_model(modelFile[1])
         self.modelFile=modelFile
     def trainModel(self):
-        self.v_iter()
-        if self.use_sample_weight:
-            weight=self.getWeight()
-        else:
-            weight=None
-        self.model.fit(self.x,self.y_train,self.batch_size,self.epochs,sample_weight=weight)
+        #y_pred=np.ndarray.flatten(self.critic.predict(self.x))
+        y_pred=self.critic.predict(self.x)
+        y_critic=np.array(y_pred)
+        y_actor=np.zeros((len(self.y),5))
+        for i in range(len(y_critic)):
+            if self.y[i]==-1:
+                y_critic[i]=0
+            else:
+                y_critic[i][self.a[i]]=self.y[i]+self.gamma_td*np.amax(y_pred[i+1])
+        print 'Training actor...'
+        self.actor.fit(self.x,y_pred,self.batch_size,self.epochs)
+        print 'Training critic...'
+        self.critic.fit(self.x,y_critic,self.batch_size,self.epochs)
+        #self.critic.fit(self.x,y_critic,self.batch_size,50)
+        print ''
     def saveModel(self):
-        self.model.save(self.modelFile)
+        self.actor.save(self.modelFile[0])
+        self.critic.save(self.modelFile[1])
 
