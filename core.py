@@ -5,7 +5,6 @@ Created on Tue Feb 07 17:03:24 2017
 @author: Rick
 """
 
-from random import choice
 from block import Block
 import numpy as np
 import random
@@ -25,31 +24,33 @@ class Tetris:
         self.score=0
         self.board=[[0]*board_w for i in range(board_h)]
         self.curr_block=-1
-	self.blockQueue=range(7)
-	self.blockQueueIDX=0
+        self.blockQueue=range(7)
+        self.blockQueueIDX=0
  
     def reset(self):
         self.score=0
         self.board=[[0]*board_w for i in range(board_h)]
         self.curr_block=-1
+        self.blockQueue=range(7)
 
     def resetQueue(self):
-   	random.shuffle(self.blockQueue)
-	self.blockQueueIDX=0
+        random.shuffle(self.blockQueue)
+        self.blockQueueIDX=0
  
     def start(self):
+        random.seed(123)
         self.over=False
-	self.resetQueue()
+        self.resetQueue()
         self.spawnBlock()
         
     def spawnBlock(self):
-	char=block_chars[self.blockQueue[self.blockQueueIDX]]
-	self.blockQueueIDX+=1
+        char=block_chars[self.blockQueue[self.blockQueueIDX]]
+        self.blockQueueIDX+=1
         self.curr_block=Block(char,origin)
         if self.checkViolation()==True:
             self.end()
         if self.blockQueueIDX==7:
-	    self.resetQueue()
+            self.resetQueue()
  
     def end(self):
         self.over=True
