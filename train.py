@@ -1,5 +1,6 @@
 import sys
 import os.path
+import numpy as np
 from config import Config
 from trainer import Trainer
 
@@ -18,8 +19,10 @@ trainer.loadModel(cfg.modelfile)
 
 prefix='data/'
 fileArray=[]
-for n in range(cfg.ncycle):
+#for n in range(cfg.ncycle):
+for n in np.random.permutation(cycle+1)[0:cfg.train_capacity]:
     if os.path.isfile(dataPath(prefix,n)[0]):
+        print dataPath(prefix,n)
         fileArray.append(dataPath(prefix,n))
 if os.path.isfile(special_data[0]):
     fileArray.append(special_data)

@@ -8,7 +8,7 @@ class Trainer:
         self.use_sample_weight=cfg.use_sample_weight
         self.epochs=cfg.epochs
         self.batch_size=cfg.batch_size
-        self.lr_td=cfg.lr_td
+        self.lr_td_decay=cfg.lr_td_decay
         self.gamma_td=cfg.gamma_td
         self.nbins=cfg.nbins
     def loadData(self,trainFiles):
@@ -24,7 +24,8 @@ class Trainer:
         self.a=np.concatenate(a_array)
     def v_iter(self):
         length = len(self.y)
-        y_pred = self.model.predict(self.x)
+        y_pred = self.model.predict(self.x,2048,verbose=1)
+        print ''
         self.y_train=np.array(y_pred)
         for i in range(length):
             if self.y[i]==-1:
@@ -32,7 +33,8 @@ class Trainer:
             else:
                 action=self.a[i]
                 delta=self.y[i]+self.gamma_td*np.amax(y_pred[i+1])-y_pred[i][action]
-                self.y_train[i][action]=y_pred[i][action]+self.lr_td*delta
+                lr_td=1/(1+self.lr_td_decay*self.cycle)
+                self.y_train[i][action]=y_pred[i][action]+lr_td*delta
     def getWeight(self):
         eps=1e-7
         binning=np.linspace(np.amin(self.y_train)-eps,np.amax(self.y_train)+eps,self.nbins)
