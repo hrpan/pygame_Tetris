@@ -28,14 +28,15 @@ def getHeights(board):
 
 def roughness(board):
     height=getHeights(board)
-    return np.sum(np.ediff1d(height)*np.ediff1d(height))
+    #return np.sum(np.ediff1d(height)*np.ediff1d(height))
+    return np.sum(np.absolute(np.ediff1d(height)))
 
 def caves(board):
     height=20-getHeights(board)
     cave=0
     for col in range(board.shape[1]):
         for row in range(height[col],board.shape[0]):
-            if board[row][col]==0:
+            if board[row][col]==0 or board[row][col]==-1:
                 cave+=1
     return cave        
 
@@ -43,9 +44,9 @@ def evalBoard(board,score):
     board=board[2:22,:]
     hole_idx=2
     penalty=0
-    penalty+=0.1*roughness(board)
+    penalty+=roughness(board)
     #penalty+=0.1*np.average(getHeights(board))
-    penalty+=0.5*caves(board)
+    penalty+=caves(board)
     """
     for idx,x in np.ndenumerate(board):
         if x == 0 or x == -1:
@@ -55,7 +56,7 @@ def evalBoard(board,score):
     hole_idx-=2
     penalty+=0.3*hole_idx
     """
-    return score-penalty
+    return 10*score-penalty
 
 """
 def evalBoard(board,score):
