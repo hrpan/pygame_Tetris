@@ -19,10 +19,11 @@ class Predict:
         self.model=load_model(cfg.modelfile)
         self.cycle=cycle
         self.ncycle=cfg.ncycle
-        self.eps = max(np.exp(-cfg.eps_decay_rate*cycle),cfg.eps_pred)
-
+        self.eps = max(1./(1.+cfg.eps_decay_rate*cycle),cfg.eps_pred)
+        print 'EPS_greedy:', self.eps
     def predictOper(self,boards):
         boards = np.array(boards).reshape((1,22,10,1))[:,2:22,:,:]
+        
         if np.random.rand()>self.eps:
             predicts = self.model.predict(boards)
             #expected = np.array([expected_value(x) for x in predicts])
@@ -30,5 +31,9 @@ class Predict:
         else:
             roll = np.random.choice(range(5))
         return roll
-
-
+        """
+        predicts = self.model.predict(boards)[0]
+        prob = np.exp(predicts)/np.sum(np.exp(predicts))
+        roll = np.random.choice(range(5),p=prob)
+        return roll
+        """
