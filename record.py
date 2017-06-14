@@ -44,9 +44,9 @@ def evalBoard(board,score):
     board=board[2:22,:]
     hole_idx=2
     penalty=0
-    penalty+=roughness(board)
+    penalty+=0.1*roughness(board)
     #penalty+=0.1*np.average(getHeights(board))
-    penalty+=caves(board)
+    penalty+=0.1*caves(board)
     """
     for idx,x in np.ndenumerate(board):
         if x == 0 or x == -1:
@@ -56,7 +56,7 @@ def evalBoard(board,score):
     hole_idx-=2
     penalty+=0.3*hole_idx
     """
-    return 10*score-penalty
+    return score-penalty
 
 """
 def evalBoard(board,score):
