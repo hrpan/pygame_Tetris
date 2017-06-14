@@ -20,10 +20,13 @@ trainer.loadModel(cfg.modelfile)
 prefix='data/'
 fileArray=[]
 #for n in range(cfg.ncycle):
-for n in np.random.permutation(cycle+1)[0:cfg.train_capacity]:
+print 'Training cycles: ', cycle, ' ',
+fileArray.append(dataPath(prefix,cycle))
+for n in np.random.permutation(cycle)[0:cfg.train_capacity-1]:
+    print n, ' ',
     if os.path.isfile(dataPath(prefix,n)[0]):
-        print dataPath(prefix,n)
         fileArray.append(dataPath(prefix,n))
+print ''
 if os.path.isfile(special_data[0]):
     fileArray.append(special_data)
 trainer.loadData(fileArray)
