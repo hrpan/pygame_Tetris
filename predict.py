@@ -20,7 +20,7 @@ class Predict:
         self.cycle=cycle
         self.ncycle=cfg.ncycle
         self.eps = max(1./(1.+cfg.eps_decay_rate*cycle),cfg.eps_pred)
-        print 'EPS_greedy:', self.eps
+        print 'EPS_greedy:%.3f'% self.eps
     def predictOper(self,boards):
         boards = np.array(boards).reshape((1,22,10,1))[:,2:22,:,:]
         
