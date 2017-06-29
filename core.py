@@ -38,7 +38,8 @@ class Tetris:
         self.blockQueueIDX=0
  
     def start(self):
-        random.seed(123)
+        #random.seed(123)
+        random.seed()
         self.over=False
         self.resetQueue()
         self.spawnBlock()
