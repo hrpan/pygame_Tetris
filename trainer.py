@@ -28,10 +28,10 @@ class Trainer:
         print ''
         self.y_train=np.array(y_pred)
         for i in range(length):
+            action=self.a[i]
             if self.y[i]==-1:
-                self.y_train[i]=[0,0,0,0,0]
+                self.y_train[i][action]=-5
             else:
-                action=self.a[i]
                 delta=self.y[i]+self.gamma_td*np.amax(y_pred[i+1])-y_pred[i][action]
                 lr_td=1/(1+self.lr_td_decay*self.cycle)
                 self.y_train[i][action]=y_pred[i][action]+lr_td*delta
